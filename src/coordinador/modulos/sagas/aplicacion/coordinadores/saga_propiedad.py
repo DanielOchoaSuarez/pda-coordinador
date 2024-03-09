@@ -51,9 +51,14 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
 
     def construir_comando(self, evento: EventoDominio, tipo_comando: type):
         print(
-            f"SAGA Orquestacion - Transformando evento {evento} en comando {tipo_comando}")
+            f"SAGA Orquestacion - Transformando evento {evento} en comando {tipo_comando.__name__}")
 
         if isinstance(evento, PropiedadCreada):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+
+        elif isinstance(evento, CrearPropiedadCompensacion):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
@@ -62,7 +67,6 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
-        
 
 
 def oir_mensaje(mensaje):

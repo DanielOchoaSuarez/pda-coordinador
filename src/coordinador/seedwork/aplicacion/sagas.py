@@ -70,7 +70,6 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
     index: int
 
     def obtener_paso_dado_un_evento(self, evento: EventoDominio):
-        print(f"SAGA Orquestacion - procesando {len(self.pasos)} pasos")
         for i, paso in enumerate(self.pasos):
             if not isinstance(paso, Transaccion):
                 continue
@@ -83,14 +82,15 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
         return isinstance(self.pasos[index+1], Fin)
 
     def procesar_evento(self, evento: EventoDominio):
-        print("SAGA Orquestacion - procesando evento", evento)
         paso, index = self.obtener_paso_dado_un_evento(evento)
+        print(
+            f"SAGA Orquestacion - procesando {index} de {len(self.pasos) - 2} pasos")
 
         if isinstance(evento, paso.evento):
             print("SAGA Orquestacion - Procesando siguiente paso")
 
             if self.es_ultima_transaccion(index):
-                print("SAGA Orquestacion - Fin compensaciones")
+                print("SAGA Orquestacion - Fin transacciones")
                 self.terminar()
             else:
                 self.publicar_comando(evento, self.pasos[index+1].comando)
