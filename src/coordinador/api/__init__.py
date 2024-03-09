@@ -17,14 +17,16 @@ def handle_exception(err):
     return jsonify(response), err.code
 
 
-# def comenzar_consumidor():
-#     import threading
-#     import contractual.modulos.contratos.infraestructura.consumidores as contratos
+def comenzar_consumidor():
+    import threading
+    import coordinador.modulos.sagas.infraestructura.consumidores as contratos
 
-#     # Suscripción a eventos
-#     threading.Thread(target=contratos.suscribirse_a_eventos).start()
-#     threading.Thread(target=contratos.suscribirse_a_eventos,
-#                      args=[app]).start()
+    # Suscripción a eventos
+    threading.Thread(target=contratos.suscribirse_evento_propiedad_creada, args=[app]).start()
+    threading.Thread(target=contratos.suscribirse_evento_propiedad_fallida, args=[app]).start()
+    threading.Thread(target=contratos.suscribirse_evento_contratro_creado, args=[app]).start()
+    threading.Thread(target=contratos.suscribirse_evento_contratro_fallido, args=[app]).start()
+
 
 #     # Suscripción a comandos
 #     # threading.Thread(target=contratos.suscribirse_a_comandos).start()
@@ -32,4 +34,4 @@ def handle_exception(err):
 #                      args=[app]).start()
 
 
-# comenzar_consumidor()
+comenzar_consumidor()

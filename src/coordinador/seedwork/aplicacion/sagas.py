@@ -19,7 +19,7 @@ class CoordinadorSaga(ABC):
         ...
 
     def publicar_comando(self, evento: EventoDominio, tipo_comando: type):
-        comando = construir_comando(evento, tipo_comando)
+        comando = self.construir_comando(evento, tipo_comando)
         ejecutar_commando(comando)
 
     @abstractmethod
@@ -70,7 +70,7 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
     index: int
 
     def obtener_paso_dado_un_evento(self, evento: EventoDominio):
-        for i, paso in enumerate(pasos):
+        for i, paso in enumerate(self.pasos):
             if not isinstance(paso, Transaccion):
                 continue
 
@@ -83,7 +83,7 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
 
     def procesar_evento(self, evento: EventoDominio):
         paso, index = self.obtener_paso_dado_un_evento(evento)
-        if es_ultima_transaccion(index) and not isinstance(evento, paso.error):
+        if self.es_ultima_transaccion(index) and not isinstance(evento, paso.error):
             self.terminar()
         elif isinstance(evento, paso.error):
             self.publicar_comando(evento, self.pasos[index-1].compensacion)
