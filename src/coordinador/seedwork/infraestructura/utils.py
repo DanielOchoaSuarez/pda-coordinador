@@ -15,6 +15,9 @@ SUB_EVENTO_PROPIEDAD_FALLIDA = 'pda-sub-evento-propiedad-fallida'
 COMANDO_CREAR_PROPIEDAD = 'comandos-crear-propiedad'
 SUB_COMANDO_CREAR_PROPIEDAD = 'pda-sub-comando-crear-propiedad'
 
+COMANDO_CREAR_PROPIEDAD_FALLIDA = 'comandos-crear-propiedad-fallida'
+SUB_COMANDO_CREAR_PROPIEDAD_FALLIDA = 'pda-sub-comando-crear-propiedad-fallida'
+
 
 ################################################
 # Eventos, comandos  y subscriptores contratos #
@@ -25,6 +28,12 @@ SUB_EVENTO_CONTRATRO_CREADO = 'pda-sub-evento-contratro-creado'
 
 EVENTO_CONTRATRO_FALLIDO = 'eventos-contratro-fallido'
 SUB_EVENTO_CONTRATRO_FALLIDO = 'pda-sub-evento-contratro-fallido'
+
+COMANDO_CREAR_CONTRATO = 'comandos-crear-contrato'
+SUB_COMANDO_CREAR_CONTRATO = 'pda-sub-comando-crear-contrato'
+
+COMANDO_CREAR_CONTRATO_FALLIDO = 'comandos-crear-contrato-fallido'
+SUB_COMANDO_CREAR_CONTRATO_FALLIDO = 'pda-sub-comando-crear-contrato-fallido'
 
 
 epoch = datetime.datetime.utcfromtimestamp(0)

@@ -9,7 +9,7 @@ import datetime
 
 from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoCreacionPropiedadFallida, EventoContratoCreado, EventoCreacionContratoFallido
-from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadFallido, ComandoCrearContrato, ComandoCrearContratoFallido
 
 
 ####################
@@ -119,6 +119,73 @@ def suscribirse_comando_crear_propiedad(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Comando crear propiedad recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+def suscribirse_comando_crear_propiedad_fallida(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_CREAR_PROPIEDAD_FALLIDA, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_CREAR_PROPIEDAD_FALLIDA, schema=AvroSchema(ComandoCrearPropiedadFallido))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando crear propiedad fallida recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+########################
+# Comandos Contractual #
+########################
+
+def suscribirse_comando_crear_contratro(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_CREAR_CONTRATO, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_CREAR_CONTRATO, schema=AvroSchema(ComandoCrearContrato))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando crear contrato recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+def suscribirse_comando_crear_contratro_fallido(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_CREAR_CONTRATO_FALLIDO, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_CREAR_CONTRATO_FALLIDO, schema=AvroSchema(ComandoCrearContratoFallido))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando crear contrato fallido recibido: {datos}')
             consumidor.acknowledge(mensaje)
 
         cliente.close()

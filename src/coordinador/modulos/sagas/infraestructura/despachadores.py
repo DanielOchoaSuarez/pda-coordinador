@@ -6,7 +6,8 @@ from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.aplicacion.dto import *
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoPropiedadCreadaPayload, EventoCreacionPropiedadFallida, CreacionPropiedadFallidaPayload
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoContratoCreado, ContratoCreadoPayload, EventoCreacionContratoFallido, CreacionContratoFallidoPayload
-from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadPayload
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadPayload, ComandoCrearPropiedadFallido, ComandoCrearPropiedadFallidoPayload
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearContrato, ComandoCrearContratoPayload, ComandoCrearContratoFallido, ComandoCrearContratoFallidoPayload
 # from aeroalpes.modulos.vuelos.infraestructura.mapeadores import MapadeadorEventosReserva
 
 
@@ -67,6 +68,27 @@ class Despachador:
                 id_propiedad=str(dto.id_propiedad),
             )
             comando_integracion = ComandoCrearPropiedad(data=payload)
+
+        elif isinstance(dto, CrearPropiedadFallidaDTO):
+            print('Creando ComandoCrearPropiedadFallidoPayload')
+            payload = ComandoCrearPropiedadFallidoPayload(
+                id_propiedad=str(dto.id_propiedad),
+            )
+            comando_integracion = ComandoCrearPropiedadFallido(data=payload)
+
+        elif isinstance(dto, CrearContratroDTO):
+            print('Creando ComandoCrearContratoPayload')
+            payload = ComandoCrearContratoPayload(
+                id_propiedad=str(dto.id_propiedad),
+            )
+            comando_integracion = ComandoCrearContrato(data=payload)
+
+        elif isinstance(dto, CrearContratroFallidoDTO):
+            print('Creando ComandoCrearContratoFallidoPayload')
+            payload = ComandoCrearContratoFallidoPayload(
+                id_propiedad=str(dto.id_propiedad),
+            )
+            comando_integracion = ComandoCrearContratoFallido(data=payload)
 
         self._publicar_mensaje(comando_integracion, topico,
                                AvroSchema(comando_integracion.__class__))

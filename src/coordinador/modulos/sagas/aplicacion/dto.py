@@ -36,3 +36,18 @@ class CreacionContratoFallidoDTO(DTO):
 @dataclass(frozen=True)
 class CrearPropiedadDTO(DTO):
     id_propiedad: str = field(default_factory=str)
+
+
+@dataclass(frozen=True)
+class CrearPropiedadFallidaDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
+
+@dataclass(frozen=True)
+class CrearContratroDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
+
+@dataclass(frozen=True)
+class CrearContratroFallidoDTO(DTO):
+    id_propiedad: str = field(default_factory=str)

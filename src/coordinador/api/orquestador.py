@@ -33,7 +33,16 @@ def test_eventos():
 
 @ab.route('/test-comandos', methods=['GET'])
 def test_comandos():
-    crear_propiedad = CrearPropiedadDTO(id_propiedad='1')
+    crear_propiedad = CrearPropiedadDTO(id_propiedad='A')
     Despachador().publicar_comando(crear_propiedad, utils.COMANDO_CREAR_PROPIEDAD)
+
+    crear_propiedad_fallida = CrearPropiedadFallidaDTO(id_propiedad='B')
+    Despachador().publicar_comando(crear_propiedad_fallida, utils.COMANDO_CREAR_PROPIEDAD_FALLIDA)
+
+    crear_contrato = CrearContratroDTO(id_propiedad='C')
+    Despachador().publicar_comando(crear_contrato, utils.COMANDO_CREAR_CONTRATO)
+
+    crear_contrato_fallido = CrearContratroFallidoDTO(id_propiedad='D')
+    Despachador().publicar_comando(crear_contrato_fallido, utils.COMANDO_CREAR_CONTRATO_FALLIDO)
 
     return jsonify({'result': 'comandos publicados'})
