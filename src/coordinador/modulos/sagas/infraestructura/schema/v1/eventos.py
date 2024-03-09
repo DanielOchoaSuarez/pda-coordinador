@@ -44,3 +44,25 @@ class CreacionContratoFallidoPayload(Record):
 
 class EventoCreacionContratoFallido(EventoIntegracion):
     data = CreacionContratoFallidoPayload()
+
+
+#######################
+# Eventos Auditoria   #
+#######################
+
+
+class AuditoriaCreadaPayload(Record):
+    id_propiedad = String()
+    numero_contrato = String()
+
+
+class EventoAuditoriaCreada(EventoIntegracion):
+    data = AuditoriaCreadaPayload()
+
+
+class CreacionAuditoriaFallidaPayload(Record):
+    id_propiedad = String()
+
+
+class EventoCreacionAuditoriaFallida(EventoIntegracion):
+    data = CreacionAuditoriaFallidaPayload()

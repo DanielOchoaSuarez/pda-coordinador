@@ -8,6 +8,7 @@ from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
 from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada, CreacionPropiedadFallida
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
+
 ab = Blueprint('orquestador', __name__)
 
 
@@ -32,6 +33,14 @@ def test_eventos():
     contrato_fallido_dto = CreacionContratoFallidoDTO(id_propiedad='1')
     Despachador().publicar_evento(contrato_fallido_dto, utils.EVENTO_CONTRATRO_FALLIDO)
 
+
+    auditoria_creada_dto = AuditoriaCreadaDTO(
+    id_propiedad='1', numero_contrato='123')
+    Despachador().publicar_evento(auditoria_creada_dto, utils.EVENTO_AUDITORIA_CREADA)
+
+    auditoria_fallida_dto = CreacionAuditoriaFallidaDTO(id_propiedad='1')
+    Despachador().publicar_evento(auditoria_fallida_dto, utils.EVENTO_AUDITORIA_FALLIDA)
+
     return jsonify({'result': 'eventos publicados'})
 
 
@@ -48,6 +57,12 @@ def test_comandos():
 
     crear_contrato_fallido = CrearContratroFallidoDTO(id_propiedad='D')
     Despachador().publicar_comando(crear_contrato_fallido, utils.COMANDO_CREAR_CONTRATO_FALLIDO)
+
+    crear_auditoria = CrearAuditoriaDTO(id_propiedad='E')
+    Despachador().publicar_comando(crear_auditoria, utils.COMANDO_CREAR_AUDITORIA)
+
+    crear_auditoria_fallida = CrearAuditoriaFallidaDTO(id_propiedad='F')
+    Despachador().publicar_comando(crear_auditoria_fallida, utils.COMANDO_CREAR_AUDITORIA_FALLIDA)
 
     return jsonify({'result': 'comandos publicados'})
 

@@ -36,6 +36,23 @@ COMANDO_CREAR_CONTRATO_FALLIDO = 'comandos-crear-contrato-fallido'
 SUB_COMANDO_CREAR_CONTRATO_FALLIDO = 'pda-sub-comando-crear-contrato-fallido'
 
 
+################################################
+# Eventos, comandos  y subscriptores Auditoria #
+################################################
+
+EVENTO_AUDITORIA_CREADA = 'eventos-auditoria-creada'
+SUB_EVENTO_AUDITORIA_CREADA = 'pda-sub-evento-auditoria-creada'
+
+EVENTO_AUDITORIA_FALLIDA = 'eventos-auditoria-fallida'
+SUB_EVENTO_AUDITORIA_FALLIDA = 'pda-sub-evento-auditoria-fallida'
+
+COMANDO_CREAR_AUDITORIA = 'comandos-crear-auditoria'
+SUB_COMANDO_CREAR_AUDITORIA = 'pda-sub-comando-crear-auditoria'
+
+COMANDO_CREAR_AUDITORIA_FALLIDA = 'comandos-crear-auditoria-fallida'
+SUB_COMANDO_CREAR_AUDITORIA_FALLIDA = 'pda-sub-comando-crear-auditoria-fallida'
+
+
 epoch = datetime.datetime.utcfromtimestamp(0)
 
 

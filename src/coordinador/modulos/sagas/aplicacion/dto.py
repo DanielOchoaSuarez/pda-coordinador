@@ -28,6 +28,15 @@ class CreacionContratoFallidoDTO(DTO):
     id_propiedad: str = field(default_factory=str)
 
 
+@dataclass(frozen=True)
+class AuditoriaCreadaDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+    numero_contrato: str = field(default_factory=str)
+
+@dataclass(frozen=True)
+class CreacionAuditoriaFallidaDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
 ####################
 # DTOs de comandos #
 ####################
@@ -36,7 +45,6 @@ class CreacionContratoFallidoDTO(DTO):
 @dataclass(frozen=True)
 class CrearPropiedadDTO(DTO):
     id_propiedad: str = field(default_factory=str)
-
 
 @dataclass(frozen=True)
 class CrearPropiedadFallidaDTO(DTO):
@@ -47,7 +55,15 @@ class CrearPropiedadFallidaDTO(DTO):
 class CrearContratroDTO(DTO):
     id_propiedad: str = field(default_factory=str)
 
-
 @dataclass(frozen=True)
 class CrearContratroFallidoDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
+
+@dataclass(frozen=True)
+class CrearAuditoriaDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
+@dataclass(frozen=True)
+class CrearAuditoriaFallidaDTO(DTO):
     id_propiedad: str = field(default_factory=str)

@@ -8,8 +8,8 @@ import traceback
 import datetime
 
 from coordinador.seedwork.infraestructura import utils
-from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoCreacionPropiedadFallida, EventoContratoCreado, EventoCreacionContratoFallido
-from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadFallido, ComandoCrearContrato, ComandoCrearContratoFallido
+from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoCreacionPropiedadFallida, EventoContratoCreado, EventoCreacionContratoFallido, EventoAuditoriaCreada, EventoCreacionAuditoriaFallida
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadFallido, ComandoCrearContrato, ComandoCrearContratoFallido, ComandoCrearAuditoria, ComandoCrearAuditoriaFallida
 
 
 ####################
@@ -104,6 +104,51 @@ def suscribirse_evento_contratro_fallido(app=None):
             cliente.close()
 
 
+#######################
+# Eventos Auditoria #
+#######################
+
+def suscribirse_evento_auditoria_creada(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(f'pulsar://{utils.broker_host()}:6650')
+        consumidor = cliente.subscribe(utils.EVENTO_AUDITORIA_CREADA, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_EVENTO_AUDITORIA_CREADA, schema=AvroSchema(EventoAuditoriaCreada))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Evento auditoria creada: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de eventos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+def suscribirse_evento_auditoria_fallida(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(f'pulsar://{utils.broker_host()}:6650')
+        consumidor = cliente.subscribe(utils.EVENTO_AUDITORIA_FALLIDA, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_EVENTO_AUDITORIA_FALLIDA, schema=AvroSchema(EventoCreacionAuditoriaFallida))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Evento auditoria creada fallida: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de eventos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
 #####################
 # Comandos Catastro #
 #####################
@@ -186,6 +231,52 @@ def suscribirse_comando_crear_contratro_fallido(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Comando crear contrato fallido recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+########################
+# Comandos Auditoria   #
+########################
+
+def suscribirse_comando_crear_auditoria(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_CREAR_AUDITORIA, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_CREAR_AUDITORIA, schema=AvroSchema(ComandoCrearAuditoria))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando crear auditoria recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+def suscribirse_comando_crear_auditoria_fallida(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_CREAR_AUDITORIA_FALLIDA, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_CREAR_AUDITORIA_FALLIDA, schema=AvroSchema(ComandoCrearAuditoriaFallida))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando crear auditoria fallido recibido: {datos}')
             consumidor.acknowledge(mensaje)
 
         cliente.close()

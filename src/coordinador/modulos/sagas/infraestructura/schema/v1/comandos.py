@@ -41,3 +41,23 @@ class ComandoCrearContratoFallidoPayload(ComandoIntegracion):
 
 class ComandoCrearContratoFallido(ComandoIntegracion):
     data = ComandoCrearContratoFallidoPayload()
+
+
+########################
+# Comandos Auditoria #
+########################
+
+class ComandoCrearAuditoriaPayload(ComandoIntegracion):
+    id_propiedad = String()
+
+
+class ComandoCrearAuditoria(ComandoIntegracion):
+    data = ComandoCrearAuditoriaPayload()
+
+
+class ComandoCrearAuditoriaFallidaPayload(ComandoIntegracion):
+    id_propiedad = String()
+
+
+class ComandoCrearAuditoriaFallida(ComandoIntegracion):
+    data = ComandoCrearAuditoriaFallidaPayload()
