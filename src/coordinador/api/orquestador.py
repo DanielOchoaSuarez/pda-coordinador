@@ -1,8 +1,11 @@
 from flask import Blueprint, jsonify
+from pydispatch import dispatcher
 
 from coordinador.modulos.sagas.aplicacion.dto import *
 from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
+
+from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada
 
 ab = Blueprint('orquestador', __name__)
 
@@ -46,3 +49,11 @@ def test_comandos():
     Despachador().publicar_comando(crear_contrato_fallido, utils.COMANDO_CREAR_CONTRATO_FALLIDO)
 
     return jsonify({'result': 'comandos publicados'})
+
+
+@ab.route('/test-saga-propiedad', methods=['GET'])
+def test_saga():
+    evento_propiedad_creada = PropiedadCreada(id_propiedad='1', numero_catastro='123')
+    dispatcher.send(signal=f'{type(evento_propiedad_creada).__name__}Dominio', evento=evento_propiedad_creada)
+    return jsonify({'result': 'saga iniciada'})
+

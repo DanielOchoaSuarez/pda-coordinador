@@ -52,17 +52,17 @@ class Inicio(Paso):
 
 @dataclass
 class Fin(Paso):
-    ...
+    index: int
 
 
 @dataclass
 class Transaccion(Paso):
-
+    index: int
     comando: Comando
     evento: EventoDominio
     error: EventoDominio
     compensacion: Comando
-    exitosa: bool
+    # exitosa: bool
 
 
 class CoordinadorOrquestacion(CoordinadorSaga, ABC):
@@ -70,6 +70,7 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
     index: int
 
     def obtener_paso_dado_un_evento(self, evento: EventoDominio):
+        print(f"SAGA Orquestacion - procesando {len(self.pasos)} pasos")
         for i, paso in enumerate(self.pasos):
             if not isinstance(paso, Transaccion):
                 continue
@@ -79,13 +80,17 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
         raise Exception("Evento no hace parte de la transacción")
 
     def es_ultima_transaccion(self, index):
-        return len(self.pasos) - 1
+        return (len(self.pasos) - 1) == index
 
     def procesar_evento(self, evento: EventoDominio):
+        print("SAGA Orquestacion - procesando evento", evento)
         paso, index = self.obtener_paso_dado_un_evento(evento)
         if self.es_ultima_transaccion(index) and not isinstance(evento, paso.error):
+            print("SAGA Orquestacion - Procesando paso final")
             self.terminar()
         elif isinstance(evento, paso.error):
+            print("SAGA Orquestacion - Procesando error")
             self.publicar_comando(evento, self.pasos[index-1].compensacion)
         elif isinstance(evento, paso.evento):
-            self.publicar_comando(evento, self.pasos[index+1].compensacion)
+            print("SAGA Orquestacion - Procesando siguiente paso")
+            self.publicar_comando(evento, self.pasos[index+1].comando)
