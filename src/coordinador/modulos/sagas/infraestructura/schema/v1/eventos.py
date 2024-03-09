@@ -1,20 +1,19 @@
 from pulsar.schema import *
 from coordinador.seedwork.infraestructura.schema.v1.eventos import EventoIntegracion
-from coordinador.seedwork.infraestructura.utils import time_millis
-import uuid
+
 
 ####################
 # Eventos Catastro #
 ####################
 
 
-class PropiedadCreadaPayload(Record):
+class EventoPropiedadCreadaPayload(Record):
     id_propiedad = String()
     numero_catastro = String()
 
 
 class EventoPropiedadCreada(EventoIntegracion):
-    data = PropiedadCreadaPayload()
+    data = EventoPropiedadCreadaPayload()
 
 
 class CreacionPropiedadFallidaPayload(Record):

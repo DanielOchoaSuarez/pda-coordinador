@@ -1,13 +1,11 @@
 from pulsar.schema import *
-from dataclasses import dataclass, field
 from coordinador.seedwork.infraestructura.schema.v1.comandos import (
     ComandoIntegracion)
 
 
-class ComandoCrearReservaPayload(ComandoIntegracion):
-    id_usuario = String()
-    # TODO Cree los records para itinerarios
+class ComandoCrearPropiedadPayload(ComandoIntegracion):
+    id_propiedad = String()
 
 
-class ComandoCrearReserva(ComandoIntegracion):
-    data = ComandoCrearReservaPayload()
+class ComandoCrearPropiedad(ComandoIntegracion):
+    data = ComandoCrearPropiedadPayload()

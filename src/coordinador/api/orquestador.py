@@ -29,3 +29,11 @@ def test_eventos():
     Despachador().publicar_evento(contrato_fallido_dto, utils.EVENTO_CONTRATRO_FALLIDO)
 
     return jsonify({'result': 'eventos publicados'})
+
+
+@ab.route('/test-comandos', methods=['GET'])
+def test_comandos():
+    crear_propiedad = CrearPropiedadDTO(id_propiedad='1')
+    Despachador().publicar_comando(crear_propiedad, utils.COMANDO_CREAR_PROPIEDAD)
+
+    return jsonify({'result': 'comandos publicados'})

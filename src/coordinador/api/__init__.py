@@ -27,11 +27,8 @@ def comenzar_consumidor():
     threading.Thread(target=contratos.suscribirse_evento_contratro_creado, args=[app]).start()
     threading.Thread(target=contratos.suscribirse_evento_contratro_fallido, args=[app]).start()
 
-
-#     # Suscripción a comandos
-#     # threading.Thread(target=contratos.suscribirse_a_comandos).start()
-#     threading.Thread(target=contratos.suscribirse_a_comandos,
-#                      args=[app]).start()
+    # Suscripción a comandos
+    threading.Thread(target=contratos.suscribirse_comando_crear_propiedad, args=[app]).start()
 
 
 comenzar_consumidor()

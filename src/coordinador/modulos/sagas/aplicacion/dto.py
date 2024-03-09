@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from coordinador.seedwork.aplicacion.dto import DTO
 
+###################
+# DTOs de eventos #
+###################
+
 
 @dataclass(frozen=True)
 class PropiedadCreadaDTO(DTO):
@@ -21,4 +25,14 @@ class ContratoCreadoDTO(DTO):
 
 @dataclass(frozen=True)
 class CreacionContratoFallidoDTO(DTO):
+    id_propiedad: str = field(default_factory=str)
+
+
+####################
+# DTOs de comandos #
+####################
+
+
+@dataclass(frozen=True)
+class CrearPropiedadDTO(DTO):
     id_propiedad: str = field(default_factory=str)

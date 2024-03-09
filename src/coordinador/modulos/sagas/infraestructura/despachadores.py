@@ -4,9 +4,9 @@ from pulsar.schema import *
 from coordinador.seedwork.infraestructura import utils
 
 from coordinador.modulos.sagas.aplicacion.dto import *
-from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, PropiedadCreadaPayload, EventoCreacionPropiedadFallida, CreacionPropiedadFallidaPayload
+from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoPropiedadCreadaPayload, EventoCreacionPropiedadFallida, CreacionPropiedadFallidaPayload
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoContratoCreado, ContratoCreadoPayload, EventoCreacionContratoFallido, CreacionContratoFallidoPayload
-# from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearReserva, ComandoCrearReservaPayload
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadPayload
 # from aeroalpes.modulos.vuelos.infraestructura.mapeadores import MapadeadorEventosReserva
 
 
@@ -27,8 +27,8 @@ class Despachador:
         evento_integracion = None
 
         if isinstance(dto, PropiedadCreadaDTO):
-            print('Creando PropiedadCreadaPayload')
-            payload = PropiedadCreadaPayload(
+            print('Creando EventoPropiedadCreadaPayload')
+            payload = EventoPropiedadCreadaPayload(
                 id_propiedad=str(dto.id_propiedad),
                 numero_catastro=str(dto.numero_catastro)
             )
@@ -59,12 +59,14 @@ class Despachador:
         self._publicar_mensaje(evento_integracion, topico,
                                AvroSchema(evento_integracion.__class__))
 
-    # def publicar_comando(self, comando, topico):
-    #     # TODO Debe existir un forma de crear el Payload en Avro con base al tipo del comando
-    #     payload = ComandoCrearReservaPayload(
-    #         id_usuario=str(comando.id_usuario)
-    #         # agregar itinerarios
-    #     )
-    #     comando_integracion = ComandoCrearReserva(data=payload)
-    #     self._publicar_mensaje(comando_integracion, topico,
-    #                            AvroSchema(ComandoCrearReserva))
+    def publicar_comando(self, dto, topico):
+
+        if isinstance(dto, CrearPropiedadDTO):
+            print('Creando ComandoCrearPropiedadPayload')
+            payload = ComandoCrearPropiedadPayload(
+                id_propiedad=str(dto.id_propiedad),
+            )
+            comando_integracion = ComandoCrearPropiedad(data=payload)
+
+        self._publicar_mensaje(comando_integracion, topico,
+                               AvroSchema(comando_integracion.__class__))
