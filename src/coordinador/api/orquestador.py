@@ -5,7 +5,8 @@ from coordinador.modulos.sagas.aplicacion.dto import *
 from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
 
-from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada
+from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada, CreacionPropiedadFallida
+from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
 ab = Blueprint('orquestador', __name__)
 
@@ -52,8 +53,29 @@ def test_comandos():
 
 
 @ab.route('/test-saga-propiedad', methods=['GET'])
-def test_saga():
-    evento_propiedad_creada = PropiedadCreada(id_propiedad='1', numero_catastro='123')
+def test_saga_propiedad():
+    evento_propiedad_creada = PropiedadCreada(id_propiedad='111', numero_catastro='AAA111')
     dispatcher.send(signal=f'{type(evento_propiedad_creada).__name__}Dominio', evento=evento_propiedad_creada)
-    return jsonify({'result': 'saga iniciada'})
+    return jsonify({'result': 'test saga propiedad creada iniciada'})
+
+
+@ab.route('/test-saga-propiedad-compensacion', methods=['GET'])
+def test_saga_propiedad_compensacion():
+    evento_propiedad_compensacion = CreacionPropiedadFallida(id_propiedad='222')
+    dispatcher.send(signal=f'{type(evento_propiedad_compensacion).__name__}Dominio', evento=evento_propiedad_compensacion)
+    return jsonify({'result': 'test saga propiedad compensacion iniciada'})
+
+
+@ab.route('/test-saga-contrato', methods=['GET'])
+def test_saga_contrato():
+    evento_contrato_creado = ContratoCreado(id_propiedad='333', numero_contrato='CONT_333')
+    dispatcher.send(signal=f'{type(evento_contrato_creado).__name__}Dominio', evento=evento_contrato_creado)
+    return jsonify({'result': 'test saga contrato creado iniciada'})
+
+
+@ab.route('/test-saga-contrato-compensacion', methods=['GET'])
+def test_saga_contrato_compensacion():
+    evento_contrato_compensacion = CreacionContratoFallido(id_propiedad='444')
+    dispatcher.send(signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
+    return jsonify({'result': 'test saga contrato compensacion iniciada'})
 

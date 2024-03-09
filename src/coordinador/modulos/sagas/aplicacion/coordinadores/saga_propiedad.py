@@ -58,7 +58,11 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
 
-# TODO Agregue un Listener/Handler para que se puedan redireccionar eventos de dominio
+        elif isinstance(evento, CreacionContratoFallido):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+        
 
 
 def oir_mensaje(mensaje):
@@ -75,7 +79,28 @@ class HandlerEventoDominio(Handler):
 
     @staticmethod
     def handle_propiedad_creada(evento):
-        print("SAGA Orquestacion - Evento: ", evento)
+        print("SAGA Orquestacion - Evento propiedad creada")
         propiedad_creada = PropiedadCreada(
             id_propiedad=evento.id_propiedad, numero_catastro=evento.numero_catastro)
         oir_mensaje(propiedad_creada)
+
+    @staticmethod
+    def handle_propiedad_creada_compensacion(evento):
+        print("SAGA Orquestacion - Evento propiedad creada compensacion")
+        propiedad_creada_compensacion = CreacionPropiedadFallida(
+            id_propiedad=evento.id_propiedad)
+        oir_mensaje(propiedad_creada_compensacion)
+
+    @staticmethod
+    def handle_contrato_creado(evento):
+        print("SAGA Orquestacion - Evento contrato creado")
+        contrato_creado = ContratoCreado(
+            id_propiedad=evento.id_propiedad, numero_contrato=evento.numero_contrato)
+        oir_mensaje(contrato_creado)
+
+    @staticmethod
+    def handle_contrato_creado_compensacion(evento):
+        print("SAGA Orquestacion - Evento contrato creado compensacion")
+        contrato_creado_compensacion = CreacionContratoFallido(
+            id_propiedad=evento.id_propiedad)
+        oir_mensaje(contrato_creado_compensacion)

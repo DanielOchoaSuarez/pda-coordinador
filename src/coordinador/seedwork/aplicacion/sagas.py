@@ -80,17 +80,25 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
         raise Exception("Evento no hace parte de la transacción")
 
     def es_ultima_transaccion(self, index):
-        return (len(self.pasos) - 1) == index
+        return isinstance(self.pasos[index+1], Fin)
 
     def procesar_evento(self, evento: EventoDominio):
         print("SAGA Orquestacion - procesando evento", evento)
         paso, index = self.obtener_paso_dado_un_evento(evento)
-        if self.es_ultima_transaccion(index) and not isinstance(evento, paso.error):
-            print("SAGA Orquestacion - Procesando paso final")
-            self.terminar()
+
+        if isinstance(evento, paso.evento):
+            print("SAGA Orquestacion - Procesando siguiente paso")
+
+            if self.es_ultima_transaccion(index):
+                print("SAGA Orquestacion - Fin compensaciones")
+                self.terminar()
+            else:
+                self.publicar_comando(evento, self.pasos[index+1].comando)
+
         elif isinstance(evento, paso.error):
             print("SAGA Orquestacion - Procesando error")
-            self.publicar_comando(evento, self.pasos[index-1].compensacion)
-        elif isinstance(evento, paso.evento):
-            print("SAGA Orquestacion - Procesando siguiente paso")
-            self.publicar_comando(evento, self.pasos[index+1].comando)
+
+            if isinstance(self.pasos[index-1], Inicio):
+                print("SAGA Orquestacion - Fin compensaciones")
+            else:
+                self.publicar_comando(evento, self.pasos[index-1].compensacion)

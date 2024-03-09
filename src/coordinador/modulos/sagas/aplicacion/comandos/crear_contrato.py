@@ -17,7 +17,7 @@ class CrearContratoHandler(CrearComandoBaseHandler):
 
     def handle(self, comando: CrearContrato):
         print('Ejecutando comando crear contrato')
-        crear_contrato = CrearContratroDTO(id_propiedad='C')
+        crear_contrato = CrearContratroDTO(id_propiedad=comando.id_propiedad)
         Despachador().publicar_comando(crear_contrato, utils.COMANDO_CREAR_CONTRATO)
 
 
