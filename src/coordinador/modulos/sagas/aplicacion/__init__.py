@@ -3,6 +3,7 @@ from .coordinadores.saga_propiedad import HandlerEventoDominio
 
 from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada, CreacionPropiedadFallida
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
+from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada, CreacionAuditoriaFallida
 
 ############################
 # Eventos dominio catastro #
@@ -18,3 +19,11 @@ dispatcher.connect(HandlerEventoDominio.handle_propiedad_creada_compensacion, si
 
 dispatcher.connect(HandlerEventoDominio.handle_contrato_creado, signal=f'{ContratoCreado.__name__}Dominio')
 dispatcher.connect(HandlerEventoDominio.handle_contrato_creado_compensacion, signal=f'{CreacionContratoFallido.__name__}Dominio')
+
+
+###############################
+# Eventos dominio auditoria   #
+###############################
+
+dispatcher.connect(HandlerEventoDominio.handle_auditoria_creada, signal=f'{AuditoriaCreada.__name__}Dominio')
+dispatcher.connect(HandlerEventoDominio.handle_auditoria_creada_compensacion, signal=f'{CreacionAuditoriaFallida.__name__}Dominio') 

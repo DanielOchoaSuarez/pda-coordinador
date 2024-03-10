@@ -7,6 +7,7 @@ from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
 
 from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada, CreacionPropiedadFallida
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
+from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada, CreacionAuditoriaFallida
 
 
 ab = Blueprint('orquestador', __name__)
@@ -94,3 +95,15 @@ def test_saga_contrato_compensacion():
     dispatcher.send(signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
     return jsonify({'result': 'test saga contrato compensacion iniciada'})
 
+
+@ab.route('/test-saga-auditoria', methods=['GET'])
+def test_saga_auditoria():
+    evento_auditoria_creado = AuditoriaCreada(id_propiedad='444', numero_contrato='CONT_444')
+    dispatcher.send(signal=f'{type(evento_auditoria_creado).__name__}Dominio', evento=evento_auditoria_creado)
+    return jsonify({'result': 'test saga auditoria creado iniciada'})
+
+@ab.route('/test-saga-auditoria-compensacion', methods=['GET'])
+def test_saga_auditoria_compensacion():
+    evento_auditoria_compensacion = CreacionAuditoriaFallida(id_propiedad='444')
+    dispatcher.send(signal=f'{type(evento_auditoria_compensacion).__name__}Dominio', evento=evento_auditoria_compensacion)
+    return jsonify({'result': 'test saga auditoria compensacion iniciada'})

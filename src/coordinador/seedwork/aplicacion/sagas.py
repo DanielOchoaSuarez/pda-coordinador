@@ -20,6 +20,7 @@ class CoordinadorSaga(ABC):
 
     def publicar_comando(self, evento: EventoDominio, tipo_comando: type):
         comando = self.construir_comando(evento, tipo_comando)
+        print("SAGA TEMPORAL - Seedwork_Saga publicar_comando(): " + str(comando.__class__))
         ejecutar_commando(comando)
 
     @abstractmethod

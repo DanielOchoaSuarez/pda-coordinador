@@ -16,6 +16,11 @@ from coordinador.modulos.sagas.aplicacion.comandos.crear_contrato import CrearCo
 from coordinador.modulos.sagas.aplicacion.comandos.crear_contrato_compensacion import CrearContratoCompensacion
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
+# Comandos y eventos Auditoria
+from coordinador.modulos.sagas.aplicacion.comandos.crear_auditoria import CrearAuditoria
+from coordinador.modulos.sagas.aplicacion.comandos.crear_auditoria_compensacion import CrearAuditoriaCompensacion
+from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada, CreacionAuditoriaFallida
+
 
 class CoordinadorPropiedades(CoordinadorOrquestacion):
 
@@ -33,7 +38,12 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
                         evento=ContratoCreado,
                         error=CreacionContratoFallido,
                         compensacion=CrearContratoCompensacion),
-            Fin(index=3)
+            Transaccion(index=3,
+                        comando=CrearAuditoria,
+                        evento=AuditoriaCreada,
+                        error=CreacionAuditoriaFallida,
+                        compensacion=CrearAuditoriaCompensacion),
+            Fin(index=4)
         ]
 
     def iniciar(self):
@@ -62,8 +72,23 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+        
+        elif isinstance(evento, ContratoCreado):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
 
         elif isinstance(evento, CreacionContratoFallido):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+        
+        elif isinstance(evento, AuditoriaCreada):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+        
+        elif isinstance(evento, CreacionAuditoriaFallida):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
@@ -108,3 +133,17 @@ class HandlerEventoDominio(Handler):
         contrato_creado_compensacion = CreacionContratoFallido(
             id_propiedad=evento.id_propiedad)
         oir_mensaje(contrato_creado_compensacion)
+
+    @staticmethod
+    def handle_auditoria_creada(evento):
+        print("SAGA Orquestacion - Evento Auditoria creado")
+        auditoria_creada = AuditoriaCreada(
+            id_propiedad=evento.id_propiedad, numero_contrato=evento.numero_contrato)
+        oir_mensaje(auditoria_creada)
+
+    @staticmethod
+    def handle_auditoria_creada_compensacion(evento):
+        print("SAGA Orquestacion - Evento Auditoria creado compensacion")
+        auditoria_creada_compensacion = CreacionAuditoriaFallida(
+            id_propiedad=evento.id_propiedad)
+        oir_mensaje(auditoria_creada_compensacion)
