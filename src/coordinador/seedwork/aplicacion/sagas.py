@@ -37,7 +37,7 @@ class CoordinadorSaga(ABC):
         ...
 
     @abstractmethod
-    def terminar():
+    def terminar(self, exitoso: bool):
         ...
 
 
@@ -101,7 +101,7 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
 
             if self.es_ultima_transaccion(index):
                 print("SAGA Orquestacion - Fin transacciones")
-                self.terminar()
+                self.terminar(True)
             else:
                 self.publicar_comando(evento, self.pasos[index+1].comando)
 
@@ -110,6 +110,6 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
 
             if isinstance(self.pasos[index-1], Inicio):
                 print("SAGA Orquestacion - Fin compensaciones")
-                self.terminar()
+                self.terminar(False)
             else:
                 self.publicar_comando(evento, self.pasos[index-1].compensacion)

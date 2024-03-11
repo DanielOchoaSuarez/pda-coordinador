@@ -81,9 +81,9 @@ class EventoRegistrarRecibido(EventoIntegracion):
     data = EventoRegistrarRecibidoPayload()
 
 
-class EventoRegistrarRecibidoFallidaPayload(Record):
-    id_propiedad = String()
+class EventoRegistrarPropiedadTerminadoPayload(Record):
+    exitoso = Boolean()
 
 
-class EventoRegistrarRecibidoFallida(EventoIntegracion):
-    data = EventoRegistrarRecibidoFallidaPayload()
+class EventoRegistrarPropiedadTerminado(EventoIntegracion):
+    data = EventoRegistrarPropiedadTerminadoPayload()

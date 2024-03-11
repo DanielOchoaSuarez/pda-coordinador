@@ -59,6 +59,7 @@ SUB_COMANDO_CREAR_AUDITORIA_FALLIDA = 'pda-sub-comando-crear-auditoria-fallida'
 #########################################
 COMANDO_REGISTRAR_PROPIEDAD = 'comandos-registrar-propiedad'
 SUB_COMANDO_REGISTRAR_PROPIEDAD = 'pda-sub-comando-registrar-propiedad'
+EVENTO_RESPUESTA_REGISTRAR_PROPIEDAD = 'saga_propiedades_terminada'
 
 
 epoch = datetime.datetime.utcfromtimestamp(0)

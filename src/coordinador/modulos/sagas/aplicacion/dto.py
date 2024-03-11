@@ -67,3 +67,7 @@ class CrearAuditoriaDTO(DTO):
 @dataclass(frozen=True)
 class CrearAuditoriaFallidaDTO(DTO):
     id_propiedad: str = field(default_factory=str)
+
+@dataclass(frozen=True)
+class RegistrarPropiedadOutDTO(DTO):
+    exitoso: bool = field(default_factory=bool)

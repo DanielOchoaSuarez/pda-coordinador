@@ -1,4 +1,5 @@
 from datetime import datetime
+from coordinador.modulos.sagas.aplicacion.dto import RegistrarPropiedadOutDTO
 
 from coordinador.seedwork.aplicacion.sagas import CoordinadorOrquestacion, Transaccion, Inicio, Fin
 from coordinador.seedwork.aplicacion.comandos import Comando
@@ -23,6 +24,9 @@ from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada,
 
 # Comandos y eventos BFF
 from coordinador.modulos.sagas.dominio.eventos.bff import SolicitudRegistrarRecibida, SolicitudRegistrarRecibidaFallida
+
+from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
+from coordinador.seedwork.infraestructura import utils
 
 
 class CoordinadorPropiedades(CoordinadorOrquestacion):
@@ -53,8 +57,17 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
         print("Iniciando saga propiedades")
         self.persistir_en_saga_log(self.pasos[0])
 
-    def terminar(self):
-        print("Terminando saga propiedades")
+    def terminar(self, exitoso: bool):
+        
+        if exitoso:
+            print("Terminando saga propiedades OK")
+        else:
+            print("Terminando saga propiedades ERROR")
+        
+        respuesta = RegistrarPropiedadOutDTO(exitoso=exitoso)
+        print(respuesta)
+        Despachador().publicar_evento(respuesta, utils.EVENTO_RESPUESTA_REGISTRAR_PROPIEDAD)
+
         self.persistir_en_saga_log(self.pasos[-1])
 
     def persistir_en_saga_log(self, mensaje):

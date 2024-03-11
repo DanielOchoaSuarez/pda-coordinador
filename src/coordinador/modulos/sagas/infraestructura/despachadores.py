@@ -4,7 +4,7 @@ from pulsar.schema import *
 from coordinador.seedwork.infraestructura import utils
 
 from coordinador.modulos.sagas.aplicacion.dto import *
-from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoPropiedadCreadaPayload, EventoCreacionPropiedadFallida, CreacionPropiedadFallidaPayload
+from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoPropiedadCreadaPayload, EventoCreacionPropiedadFallida, CreacionPropiedadFallidaPayload, EventoRegistrarPropiedadTerminado, EventoRegistrarPropiedadTerminadoPayload
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoContratoCreado, ContratoCreadoPayload, EventoCreacionContratoFallido, CreacionContratoFallidoPayload
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoAuditoriaCreada, AuditoriaCreadaPayload, EventoCreacionAuditoriaFallida, CreacionAuditoriaFallidaPayload
 from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadPayload, ComandoCrearPropiedadFallido, ComandoCrearPropiedadFallidoPayload
@@ -59,7 +59,7 @@ class Despachador:
             )
             evento_integracion = EventoCreacionContratoFallido(data=payload)
 
-        #Auditoria
+        # Auditoria
         elif isinstance(dto, AuditoriaCreadaDTO):
             print('Creando EventoAuditoriaCreadaPayload')
             payload = AuditoriaCreadaPayload(
@@ -74,6 +74,14 @@ class Despachador:
                 id_propiedad=str(dto.id_propiedad)
             )
             evento_integracion = EventoCreacionAuditoriaFallida(data=payload)
+
+        elif isinstance(dto, RegistrarPropiedadOutDTO):
+            print('Creando RegistrarPropiedadOutDTO')
+            payload = EventoRegistrarPropiedadTerminadoPayload(
+                exitoso=dto.exitoso
+            )
+            evento_integracion = EventoRegistrarPropiedadTerminado(
+                data=payload)
 
         self._publicar_mensaje(evento_integracion, topico,
                                AvroSchema(evento_integracion.__class__))
@@ -121,7 +129,7 @@ class Despachador:
             payload = ComandoCrearAuditoriaFallidaPayload(
                 id_propiedad=str(dto.id_propiedad),
             )
-            comando_integracion = ComandoCrearAuditoriaFallida(data=payload)    
+            comando_integracion = ComandoCrearAuditoriaFallida(data=payload)
 
         self._publicar_mensaje(comando_integracion, topico,
                                AvroSchema(comando_integracion.__class__))
