@@ -1,5 +1,7 @@
 from datetime import datetime
 from coordinador.modulos.sagas.aplicacion.dto import RegistrarPropiedadOutDTO
+from coordinador.modulos.sagas.dominio.entidades import Sagalog
+from coordinador.modulos.sagas.infraestructura.repositorios import RepositorioSagalogSQL
 
 from coordinador.seedwork.aplicacion.sagas import CoordinadorOrquestacion, Transaccion, Inicio, Fin
 from coordinador.seedwork.aplicacion.comandos import Comando
@@ -28,6 +30,8 @@ from coordinador.modulos.sagas.dominio.eventos.bff import SolicitudRegistrarReci
 from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
 from coordinador.seedwork.infraestructura import utils
 import uuid
+
+from coordinador.modulos.sagas.infraestructura.fabricas import FabricaRepositorio
 
 class CoordinadorPropiedades(CoordinadorOrquestacion):
     id_correlacion: uuid.UUID
@@ -75,12 +79,38 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
         # TODO Persistir estado en DB
         # Probablemente usted podría usar un repositorio para ello          
         fecha_evento = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        
+        fabrica_repositorio = FabricaRepositorio()
+        repositorio = fabrica_repositorio.crear_objeto(
+            RepositorioSagalogSQL.__class__)
+        
         if isinstance(mensaje, Transaccion):
-            print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Comando {mensaje.comando.__qualname__} - Fecha {fecha_evento}")
+            print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Comando {mensaje.comando.__qualname__} - Fecha {fecha_evento} - Eventos {mensaje.evento.__qualname__}")
+            repositorio.agregar(
+             Sagalog(
+                id_correlacion=self.id_correlacion,
+                index=mensaje.index,
+                comando=mensaje.comando.__qualname__,
+                fecha_evento=fecha_evento
+            ))
         elif isinstance(mensaje, Inicio):
             print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Inicio - Fecha {fecha_evento}")
+            repositorio.agregar(
+             Sagalog(
+                id_correlacion=self.id_correlacion,
+                index=mensaje.index,
+                comando="Inicio",
+                fecha_evento=fecha_evento
+            ))
         else:
             print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Fin - Fecha {fecha_evento}")
+            repositorio.agregar(
+             Sagalog(
+                id_correlacion=self.id_correlacion,
+                index=mensaje.index,
+                comando="Fin",
+                fecha_evento=fecha_evento
+            ))
 
     def construir_comando(self, evento: EventoDominio, tipo_comando: type):
         print(

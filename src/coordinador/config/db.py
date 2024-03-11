@@ -31,4 +31,5 @@ Base.query = db_session.query_property()
 
 
 def init_db():
+    from coordinador.modulos.sagas.infraestructura.dto import SagaLog
     Base.metadata.create_all(bind=engine)

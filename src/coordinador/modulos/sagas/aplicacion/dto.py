@@ -71,3 +71,14 @@ class CrearAuditoriaFallidaDTO(DTO):
 @dataclass(frozen=True)
 class RegistrarPropiedadOutDTO(DTO):
     exitoso: bool = field(default_factory=bool)
+
+
+###################
+# DTOs de SAGA LOG #
+###################
+@dataclass(frozen=True)
+class SagaLogDTO(DTO):
+    id_correlacion: str = field(default_factory=str)
+    index: str = field(default_factory=str)
+    comando: str = field(default_factory=str)
+    fecha_evento: str = field(default_factory=str)
