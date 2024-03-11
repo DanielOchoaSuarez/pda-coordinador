@@ -27,9 +27,10 @@ from coordinador.modulos.sagas.dominio.eventos.bff import SolicitudRegistrarReci
 
 from coordinador.modulos.sagas.infraestructura.despachadores import Despachador
 from coordinador.seedwork.infraestructura import utils
-
+import uuid
 
 class CoordinadorPropiedades(CoordinadorOrquestacion):
+    id_correlacion: uuid.UUID
 
     def inicializar_pasos(self):
         print("SAGA Orquestacion - Inicializando pasos")
@@ -72,13 +73,14 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
 
     def persistir_en_saga_log(self, mensaje):
         # TODO Persistir estado en DB
-        # Probablemente usted podría usar un repositorio para ello
+        # Probablemente usted podría usar un repositorio para ello          
+        fecha_evento = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         if isinstance(mensaje, Transaccion):
-            print(f"SAGA Log - Paso {mensaje.index} - Comando {mensaje.comando.__qualname__}")
+            print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Comando {mensaje.comando.__qualname__} - Fecha {fecha_evento}")
         elif isinstance(mensaje, Inicio):
-            print(f"SAGA Log - Paso {mensaje.index} - Inicio")
+            print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Inicio - Fecha {fecha_evento}")
         else:
-            print(f"SAGA Log - Paso {mensaje.index} - Fin")
+            print(f"SAGA Log - id_correlacion {self.id_correlacion} - Paso {mensaje.index} - Fin - Fecha {fecha_evento}")
 
     def construir_comando(self, evento: EventoDominio, tipo_comando: type):
         print(
@@ -124,7 +126,9 @@ def oir_mensaje(mensaje):
     if isinstance(mensaje, EventoDominio):
         print("SAGA Orquestacion - Coordinando: ", mensaje)
         coordinador = CoordinadorPropiedades()
+        coordinador.id_correlacion = uuid.uuid4()
         coordinador.inicializar_pasos()
+        coordinador.iniciar()
         coordinador.procesar_evento(mensaje)
     else:
         raise NotImplementedError("El mensaje no es evento de Dominio")
