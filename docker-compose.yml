@@ -1,0 +1,88 @@
+version: '3.1'
+
+services:
+
+  #Apache Pulsar
+  pulsar:
+    image: apachepulsar/pulsar:latest
+    container_name: pulsar-standalone-pda
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    command: [ "bin/pulsar", "standalone" ]
+    networks:
+      - pda_net
+
+  # BD Postgres
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    depends_on:
+      - pulsar
+    environment:
+      POSTGRES_DB: pda
+      POSTGRES_USER: laad
+      POSTGRES_PASSWORD: laad
+    ports:
+      - "5432:5432"
+    networks:
+      - pda_net
+
+  # BFF Web
+  bff:
+    image: pda-bff-web:latest
+    container_name: bff
+    depends_on:
+      - pulsar
+    environment:
+      BROKER_HOST: pulsar
+      PDA_CATASTRO_URL: http://127.0.0.1:3002/catastros
+      PDA_CONTRATO_URL: http://contractual:3003/contratos
+      PDA_AUDITORIA_URL: http://127.0.0.1:3004/contratos
+    ports:
+      - "8003:8003"
+    networks:
+      - pda_net
+
+  # Orquestador SAGA
+  saga:
+    image: pda-orquestador-saga:latest
+    container_name: saga
+    depends_on:
+      - pulsar
+      - postgres
+    environment:
+      DB_NAME: pda
+      DB_USER: laad
+      DB_PASS: laad
+      DB_HOST: postgres
+      DB_PORT: 5432
+      BROKER_HOST: pulsar
+    ports:
+      - "3001:3001"
+    networks:
+      - pda_net
+
+  # Servicio contractual
+  contractual:
+    image: pda-contractual:latest
+    container_name: contractual
+    depends_on:
+      - pulsar
+      - postgres
+      - saga
+    environment:
+      DB_NAME: pda
+      DB_USER: laad
+      DB_PASS: laad
+      DB_HOST: postgres
+      DB_PORT: 5432
+      BROKER_HOST: pulsar
+    ports:
+      - "3003:3003"
+    networks:
+      - pda_net
+
+networks:
+  pda_net:
+    driver: bridge
