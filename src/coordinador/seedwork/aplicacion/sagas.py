@@ -20,8 +20,6 @@ class CoordinadorSaga(ABC):
 
     def publicar_comando(self, evento: EventoDominio, tipo_comando: type):
         comando = self.construir_comando(evento, tipo_comando)
-        print("SAGA TEMPORAL - Seedwork_Saga publicar_comando(): " +
-              str(comando.__class__))
         ejecutar_commando(comando)
 
     @abstractmethod
@@ -104,6 +102,7 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
                 self.terminar(True)
             else:
                 self.publicar_comando(evento, self.pasos[index+1].comando)
+                self.persistir_en_saga_log(self.pasos[index+1])
 
         elif isinstance(evento, paso.error):
             print("SAGA Orquestacion - Procesando error")
@@ -113,3 +112,4 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
                 self.terminar(False)
             else:
                 self.publicar_comando(evento, self.pasos[index-1].compensacion)
+                self.persistir_en_saga_log(self.pasos[index-1])

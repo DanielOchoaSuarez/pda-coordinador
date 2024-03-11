@@ -73,7 +73,12 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
     def persistir_en_saga_log(self, mensaje):
         # TODO Persistir estado en DB
         # Probablemente usted podría usar un repositorio para ello
-        ...
+        if isinstance(mensaje, Transaccion):
+            print(f"SAGA Log - Paso {mensaje.index} - Comando {mensaje.comando.__qualname__}")
+        elif isinstance(mensaje, Inicio):
+            print(f"SAGA Log - Paso {mensaje.index} - Inicio")
+        else:
+            print(f"SAGA Log - Paso {mensaje.index} - Fin")
 
     def construir_comando(self, evento: EventoDominio, tipo_comando: type):
         print(
