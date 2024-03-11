@@ -34,7 +34,6 @@ def test_eventos():
     contrato_fallido_dto = CreacionContratoFallidoDTO(id_propiedad='1')
     Despachador().publicar_evento(contrato_fallido_dto, utils.EVENTO_CONTRATRO_FALLIDO)
 
-
     auditoria_creada_dto = AuditoriaCreadaDTO(
     id_propiedad='1', numero_contrato='123')
     Despachador().publicar_evento(auditoria_creada_dto, utils.EVENTO_AUDITORIA_CREADA)
@@ -107,3 +106,14 @@ def test_saga_auditoria_compensacion():
     evento_auditoria_compensacion = CreacionAuditoriaFallida(id_propiedad='444')
     dispatcher.send(signal=f'{type(evento_auditoria_compensacion).__name__}Dominio', evento=evento_auditoria_compensacion)
     return jsonify({'result': 'test saga auditoria compensacion iniciada'})
+
+@ab.route('/test-fin-saga', methods=['GET'])
+def test_fin_saga():
+    auditoria_creada_dto = AuditoriaCreadaDTO(
+    id_propiedad='1', numero_contrato='123')
+    Despachador().publicar_evento(auditoria_creada_dto, utils.EVENTO_AUDITORIA_CREADA)
+
+    propiedad_fallida_dto = PropiedadFallidaDTO(id_propiedad='1')
+    Despachador().publicar_evento(propiedad_fallida_dto,  utils.EVENTO_PROPIEDAD_FALLIDA)
+
+    return jsonify({'result': 'evento inicio (rollback) y fin (commit) de saga publicados'})
