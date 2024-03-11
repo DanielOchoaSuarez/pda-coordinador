@@ -7,6 +7,7 @@ import logging
 import traceback
 import datetime
 from pydispatch import dispatcher
+from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
 from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoCreacionPropiedadFallida, EventoContratoCreado, EventoCreacionContratoFallido, EventoAuditoriaCreada, EventoCreacionAuditoriaFallida
@@ -76,6 +77,12 @@ def suscribirse_evento_contratro_creado(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Evento contratro creado: {datos}')
+
+            evento_contrato_creado = ContratoCreado(
+                id_propiedad=mensaje.value().data.id_propiedad,
+                numero_contrato=mensaje.value().data.numero_contrato)
+            dispatcher.send(signal=f'{type(evento_contrato_creado).__name__}Dominio', evento=evento_contrato_creado)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
@@ -97,6 +104,10 @@ def suscribirse_evento_contratro_fallido(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Evento contratro creado fallido: {datos}')
+
+            evento_contrato_compensacion = CreacionContratoFallido(mensaje.value().data.id_propiedad,)
+            dispatcher.send(signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
