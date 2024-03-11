@@ -53,6 +53,14 @@ COMANDO_CREAR_AUDITORIA_FALLIDA = 'comandos-crear-auditoria-fallida'
 SUB_COMANDO_CREAR_AUDITORIA_FALLIDA = 'pda-sub-comando-crear-auditoria-fallida'
 
 
+
+#########################################
+# Eventos, comandos y subscriptores BFF #
+#########################################
+COMANDO_REGISTRAR_PROPIEDAD = 'comandos-registrar-propiedad'
+SUB_COMANDO_REGISTRAR_PROPIEDAD = 'pda-sub-comando-registrar-propiedad'
+
+
 epoch = datetime.datetime.utcfromtimestamp(0)
 
 

@@ -20,7 +20,8 @@ class CoordinadorSaga(ABC):
 
     def publicar_comando(self, evento: EventoDominio, tipo_comando: type):
         comando = self.construir_comando(evento, tipo_comando)
-        print("SAGA TEMPORAL - Seedwork_Saga publicar_comando(): " + str(comando.__class__))
+        print("SAGA TEMPORAL - Seedwork_Saga publicar_comando(): " +
+              str(comando.__class__))
         ejecutar_commando(comando)
 
     @abstractmethod
@@ -49,6 +50,7 @@ class Paso():
 @dataclass
 class Inicio(Paso):
     index: int = 0
+    evento: EventoDominio = None
 
 
 @dataclass
@@ -83,6 +85,13 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
         return isinstance(self.pasos[index+1], Fin)
 
     def procesar_evento(self, evento: EventoDominio):
+
+        if isinstance(evento, self.pasos[0].evento):
+            print("SAGA Orquestacion - Iniciando transacción")
+            self.publicar_comando(evento, self.pasos[1].comando)
+            self.iniciar()
+            return
+
         paso, index = self.obtener_paso_dado_un_evento(evento)
         print(
             f"SAGA Orquestacion - procesando {index} de {len(self.pasos) - 2} pasos")
@@ -101,5 +110,6 @@ class CoordinadorOrquestacion(CoordinadorSaga, ABC):
 
             if isinstance(self.pasos[index-1], Inicio):
                 print("SAGA Orquestacion - Fin compensaciones")
+                self.terminar()
             else:
                 self.publicar_comando(evento, self.pasos[index-1].compensacion)

@@ -61,3 +61,15 @@ class ComandoCrearAuditoriaFallidaPayload(ComandoIntegracion):
 
 class ComandoCrearAuditoriaFallida(ComandoIntegracion):
     data = ComandoCrearAuditoriaFallidaPayload()
+
+
+################
+# Comandos BFF #
+################
+
+class ComandoRegistrarPropiedadPayload(ComandoIntegracion):
+    id_propiedad = String()
+
+
+class ComandoRegistrarPropiedad(ComandoIntegracion):
+    data = ComandoRegistrarPropiedadPayload()

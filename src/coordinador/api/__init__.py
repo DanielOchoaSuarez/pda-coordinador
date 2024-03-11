@@ -37,5 +37,8 @@ def comenzar_consumidor():
     threading.Thread(target=contratos.suscribirse_comando_crear_auditoria, args=[app]).start()
     threading.Thread(target=contratos.suscribirse_comando_crear_auditoria_fallida, args=[app]).start()
 
+    # Suscripción comandos BFF
+    threading.Thread(target=contratos.suscribirse_comando_registrar_propiedad, args=[app]).start()
+
 
 comenzar_consumidor()

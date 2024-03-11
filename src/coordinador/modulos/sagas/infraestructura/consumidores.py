@@ -6,10 +6,13 @@ import time
 import logging
 import traceback
 import datetime
+from pydispatch import dispatcher
 
 from coordinador.seedwork.infraestructura import utils
 from coordinador.modulos.sagas.infraestructura.schema.v1.eventos import EventoPropiedadCreada, EventoCreacionPropiedadFallida, EventoContratoCreado, EventoCreacionContratoFallido, EventoAuditoriaCreada, EventoCreacionAuditoriaFallida
-from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadFallido, ComandoCrearContrato, ComandoCrearContratoFallido, ComandoCrearAuditoria, ComandoCrearAuditoriaFallida
+from coordinador.modulos.sagas.infraestructura.schema.v1.comandos import ComandoCrearPropiedad, ComandoCrearPropiedadFallido, ComandoCrearContrato, ComandoCrearContratoFallido, ComandoCrearAuditoria, ComandoCrearAuditoriaFallida, ComandoRegistrarPropiedad
+
+from coordinador.modulos.sagas.dominio.eventos.bff import SolicitudRegistrarRecibida, SolicitudRegistrarRecibidaFallida
 
 
 ####################
@@ -153,6 +156,7 @@ def suscribirse_evento_auditoria_fallida(app=None):
 # Comandos Catastro #
 #####################
 
+
 def suscribirse_comando_crear_propiedad(app=None):
     cliente = None
     try:
@@ -277,6 +281,36 @@ def suscribirse_comando_crear_auditoria_fallida(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Comando crear auditoria fallido recibido: {datos}')
+            consumidor.acknowledge(mensaje)
+
+        cliente.close()
+    except:
+        print('ERROR: Suscribiendose al tópico de comandos!')
+        traceback.print_exc()
+        if cliente:
+            cliente.close()
+
+
+################
+# Comandos BFF #
+################
+
+def suscribirse_comando_registrar_propiedad(app=None):
+    cliente = None
+    try:
+        cliente = pulsar.Client(utils.pulsar_service_url())
+        consumidor = cliente.subscribe(utils.COMANDO_REGISTRAR_PROPIEDAD, consumer_type=_pulsar.ConsumerType.Shared,
+                                       subscription_name=utils.SUB_COMANDO_REGISTRAR_PROPIEDAD, schema=AvroSchema(ComandoRegistrarPropiedad))
+
+        while True:
+            mensaje = consumidor.receive()
+            datos = mensaje.value().data
+            print(f'Comando registrar propiedad BFF recibido: {datos}')
+
+            evento_registrar = SolicitudRegistrarRecibida(
+                id_propiedad=mensaje.value().data.id_propiedad)
+            dispatcher.send(signal=f'{type(evento_registrar).__name__}Dominio', evento=evento_registrar)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()

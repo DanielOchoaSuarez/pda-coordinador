@@ -21,13 +21,16 @@ from coordinador.modulos.sagas.aplicacion.comandos.crear_auditoria import CrearA
 from coordinador.modulos.sagas.aplicacion.comandos.crear_auditoria_compensacion import CrearAuditoriaCompensacion
 from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada, CreacionAuditoriaFallida
 
+# Comandos y eventos BFF
+from coordinador.modulos.sagas.dominio.eventos.bff import SolicitudRegistrarRecibida, SolicitudRegistrarRecibidaFallida
+
 
 class CoordinadorPropiedades(CoordinadorOrquestacion):
 
     def inicializar_pasos(self):
         print("SAGA Orquestacion - Inicializando pasos")
         self.pasos = [
-            Inicio(index=0),
+            Inicio(index=0, evento=SolicitudRegistrarRecibida),
             Transaccion(index=1,
                         comando=CrearPropiedad,
                         evento=PropiedadCreada,
@@ -72,7 +75,7 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
-        
+
         elif isinstance(evento, ContratoCreado):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
@@ -82,13 +85,18 @@ class CoordinadorPropiedades(CoordinadorOrquestacion):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
-        
+
         elif isinstance(evento, AuditoriaCreada):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
-        
+
         elif isinstance(evento, CreacionAuditoriaFallida):
+            return tipo_comando(
+                id_propiedad=evento.id_propiedad,
+                fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
+
+        elif isinstance(evento, SolicitudRegistrarRecibida):
             return tipo_comando(
                 id_propiedad=evento.id_propiedad,
                 fecha_creacion=datetime.now().strftime("%d/%m/%Y"))
@@ -147,3 +155,10 @@ class HandlerEventoDominio(Handler):
         auditoria_creada_compensacion = CreacionAuditoriaFallida(
             id_propiedad=evento.id_propiedad)
         oir_mensaje(auditoria_creada_compensacion)
+
+    @staticmethod
+    def handle_registrar_propiedad_recibida(evento):
+        print("SAGA Orquestacion - Solicitud Registrar propiedad recibida")
+        registrar_propiedad = SolicitudRegistrarRecibida(
+            id_propiedad=evento.id_propiedad)
+        oir_mensaje(registrar_propiedad)

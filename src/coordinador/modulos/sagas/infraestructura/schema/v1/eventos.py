@@ -66,3 +66,24 @@ class CreacionAuditoriaFallidaPayload(Record):
 
 class EventoCreacionAuditoriaFallida(EventoIntegracion):
     data = CreacionAuditoriaFallidaPayload()
+
+
+#################
+# Eventos BFF   #
+#################
+
+
+class EventoRegistrarRecibidoPayload(Record):
+    id_propiedad = String()
+
+
+class EventoRegistrarRecibido(EventoIntegracion):
+    data = EventoRegistrarRecibidoPayload()
+
+
+class EventoRegistrarRecibidoFallidaPayload(Record):
+    id_propiedad = String()
+
+
+class EventoRegistrarRecibidoFallida(EventoIntegracion):
+    data = EventoRegistrarRecibidoFallidaPayload()
