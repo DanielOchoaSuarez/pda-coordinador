@@ -20,11 +20,11 @@ Para ejecutar la prueba de concepto final (Entrega 5) por medio de Docker es nec
 
      - docker build . -t pda-bff-web
 
-   - [Servicio Catastro]()
+   - [Servicio Catastro](https://github.com/abenitezm20/PDA-Servicio-Catastro)
 
      - docker build . -t pda-catastro
 
-   - [Servicio Contractual]()
+   - [Servicio Contractual](https://github.com/abenitezm20/PDA-Servicio-Contratos)
 
      - docker build . -t pda-contractual
 
@@ -37,5 +37,3 @@ Para ejecutar la prueba de concepto final (Entrega 5) por medio de Docker es nec
 ```
 docker-compose up -d
 ```
-
-uvicorn src.bff_web.main:app --host localhost --port 8003 --reload
