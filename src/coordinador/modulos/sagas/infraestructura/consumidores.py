@@ -8,7 +8,7 @@ import traceback
 import datetime
 from pydispatch import dispatcher
 from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada
-from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada
+from coordinador.modulos.sagas.dominio.eventos.catastro import CreacionPropiedadFallida, PropiedadCreada
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
 from coordinador.seedwork.infraestructura import utils
@@ -149,7 +149,8 @@ def suscribirse_evento_auditoria_creada(app=None):
             evento_auditoria_creado = AuditoriaCreada(
                 mensaje.value().data.id_propiedad,
                 numero_contrato='CONT_444')
-            dispatcher.send(signal=f'{type(evento_auditoria_creado).__name__}Dominio', evento=evento_auditoria_creado)
+            dispatcher.send(
+                signal=f'{type(evento_auditoria_creado).__name__}Dominio', evento=evento_auditoria_creado)
 
             consumidor.acknowledge(mensaje)
 
@@ -218,6 +219,12 @@ def suscribirse_comando_crear_propiedad_fallida(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Comando crear propiedad fallida recibido: {datos}')
+
+            evento_propiedad_compensacion = CreacionPropiedadFallida(
+                id_propiedad=mensaje.value().data.id_propiedad)
+            dispatcher.send(
+                signal=f'{type(evento_propiedad_compensacion).__name__}Dominio', evento=evento_propiedad_compensacion)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
@@ -264,6 +271,12 @@ def suscribirse_comando_crear_contratro_fallido(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Comando crear contrato fallido recibido: {datos}')
+
+            evento_contrato_compensacion = CreacionContratoFallido(
+                id_propiedad=mensaje.value().data.id_propiedad)
+            dispatcher.send(
+                signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
