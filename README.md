@@ -37,3 +37,9 @@ Para ejecutar la prueba de concepto final (Entrega 5) por medio de Docker es nec
 ```
 docker-compose up -d
 ```
+## Contribución
+
+Alexander benitez
+Daniel Ochoa
+Laura Fonseca
+Alexander contreras

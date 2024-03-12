@@ -36,9 +36,9 @@ services:
       - pulsar
     environment:
       BROKER_HOST: pulsar
-      PDA_CATASTRO_URL: http://127.0.0.1:3002/catastros
+      PDA_CATASTRO_URL: http://catastro:3004/catastros
       PDA_CONTRATO_URL: http://contractual:3003/contratos
-      PDA_AUDITORIA_URL: http://127.0.0.1:3004/contratos
+      PDA_AUDITORIA_URL: http://auditoria:3005/auditoria
     ports:
       - "8003:8003"
     networks:
@@ -80,6 +80,46 @@ services:
       BROKER_HOST: pulsar
     ports:
       - "3003:3003"
+    networks:
+      - pda_net
+
+  # Servicio catastro
+  catastro:
+    image: pda-catastro:latest
+    container_name: catastro
+    depends_on:
+      - pulsar
+      - postgres
+      - saga
+    environment:
+      DB_NAME: pda
+      DB_USER: laad
+      DB_PASS: laad
+      DB_HOST: postgres
+      DB_PORT: 5432
+      BROKER_HOST: pulsar
+    ports:
+      - "3004:3004"
+    networks:
+      - pda_net
+
+  # Servicio auditoria
+  auditoria:
+    image: pda-auditoria:latest
+    container_name: auditoria
+    depends_on:
+      - pulsar
+      - postgres
+      - saga
+    environment:
+      DB_NAME: pda
+      DB_USER: laad
+      DB_PASS: laad
+      DB_HOST: postgres
+      DB_PORT: 5432
+      BROKER_HOST: pulsar
+    ports:
+      - "3005:3005"
     networks:
       - pda_net
 
