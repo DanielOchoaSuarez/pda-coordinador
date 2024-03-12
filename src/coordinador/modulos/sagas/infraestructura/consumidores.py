@@ -7,6 +7,8 @@ import logging
 import traceback
 import datetime
 from pydispatch import dispatcher
+from coordinador.modulos.sagas.dominio.eventos.auditoria import AuditoriaCreada
+from coordinador.modulos.sagas.dominio.eventos.catastro import PropiedadCreada
 from coordinador.modulos.sagas.dominio.eventos.contrato import ContratoCreado, CreacionContratoFallido
 
 from coordinador.seedwork.infraestructura import utils
@@ -31,6 +33,13 @@ def suscribirse_evento_propiedad_creada(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Evento propiedad creada: {datos}')
+
+            evento_propiedad_creada = PropiedadCreada(
+                id_propiedad=mensaje.value().data.id_propiedad,
+                numero_catastro=mensaje.value().data.numero_catastro)
+            dispatcher.send(
+                signal=f'{type(evento_propiedad_creada).__name__}Dominio', evento=evento_propiedad_creada)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
@@ -81,7 +90,8 @@ def suscribirse_evento_contratro_creado(app=None):
             evento_contrato_creado = ContratoCreado(
                 id_propiedad=mensaje.value().data.id_propiedad,
                 numero_contrato=mensaje.value().data.numero_contrato)
-            dispatcher.send(signal=f'{type(evento_contrato_creado).__name__}Dominio', evento=evento_contrato_creado)
+            dispatcher.send(
+                signal=f'{type(evento_contrato_creado).__name__}Dominio', evento=evento_contrato_creado)
 
             consumidor.acknowledge(mensaje)
 
@@ -105,8 +115,10 @@ def suscribirse_evento_contratro_fallido(app=None):
             datos = mensaje.value().data
             print(f'Evento contratro creado fallido: {datos}')
 
-            evento_contrato_compensacion = CreacionContratoFallido(mensaje.value().data.id_propiedad,)
-            dispatcher.send(signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
+            evento_contrato_compensacion = CreacionContratoFallido(
+                mensaje.value().data.id_propiedad,)
+            dispatcher.send(
+                signal=f'{type(evento_contrato_compensacion).__name__}Dominio', evento=evento_contrato_compensacion)
 
             consumidor.acknowledge(mensaje)
 
@@ -133,6 +145,12 @@ def suscribirse_evento_auditoria_creada(app=None):
             mensaje = consumidor.receive()
             datos = mensaje.value().data
             print(f'Evento auditoria creada: {datos}')
+
+            evento_auditoria_creado = AuditoriaCreada(
+                mensaje.value().data.id_propiedad,
+                numero_contrato='CONT_444')
+            dispatcher.send(signal=f'{type(evento_auditoria_creado).__name__}Dominio', evento=evento_auditoria_creado)
+
             consumidor.acknowledge(mensaje)
 
         cliente.close()
@@ -320,7 +338,8 @@ def suscribirse_comando_registrar_propiedad(app=None):
 
             evento_registrar = SolicitudRegistrarRecibida(
                 id_propiedad=mensaje.value().data.id_propiedad)
-            dispatcher.send(signal=f'{type(evento_registrar).__name__}Dominio', evento=evento_registrar)
+            dispatcher.send(
+                signal=f'{type(evento_registrar).__name__}Dominio', evento=evento_registrar)
 
             consumidor.acknowledge(mensaje)
 
